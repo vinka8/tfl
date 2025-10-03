@@ -3,13 +3,8 @@ from fractions import Fraction
 
 alphabet = ["f", "g", "h"]
 rules = {
-    "fgh": "fff",
-    "ggg": "fgh",
-    "fff": "hhh",
-    "ghhh": "hhhg",
-    "fh": "hf",
+    "fh": "",
     "hh": "f",
-    "ghf": "hfg",
     "hf": "",
     "ff": "h",
     "g": ""

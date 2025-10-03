@@ -72,14 +72,8 @@ T = [
 ]
 
 T1 = [
-    ("fgh", "fff"),
-    ("ggg", "fgh"),
-    ("fff", "hhh"),
-    ("ghhh", "hhhg"),
-    ("fh", "hf"),
+    ("fh", ""),
     ("hh", "f"),
-    ("fgf", "ff"),
-    ("ghf", "hfg"),
     ("hf", ""),
     ("ff", "h"),
     ("g", "")
