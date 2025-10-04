@@ -1,4 +1,5 @@
 import random
+
 T = [
     ("fgh", "fff"),
     ("fgh", "ggg"),
@@ -6,6 +7,7 @@ T = [
     ("hh", "hfhgh"),
     ("gggg", "")
 ]
+
 T1 = [
     ("fh", ""),
     ("hh", "f"),
@@ -13,6 +15,7 @@ T1 = [
     ("ff", "h"),
     ("g", "")
 ]
+
 alphabet = ["f", "g", "h"]
 
 def random_word():
@@ -59,18 +62,33 @@ def words(start, rules):
         s = new_s
     return seen
 
+def words2(start, rules, check_set):
+    seen = set([start])
+    s = [start]
+    while s:
+        new_s = []
+        for w in s:
+            new_words = apply_rules(w, rules)
+            for nw in new_words:
+                if nw in check_set:
+                    return True  
+                if nw not in seen:
+                    seen.add(nw)
+                    new_s.append(nw)
+        s = new_s
+    return False  
 
 w0 = random_word()
 print("w =", w0)
 w1 = apply_random_rules(w0)
-print("w' = ", w1)
-
-words1 = words(w0, T1)
-words2 = words(w1, T1)
-
-intersect = words1 & words2
-if intersect:
+print("w' =", w1)
+if len(w0) <= len(w1):
+    words1 = words(w0, T1)
+    found = words2(w1, T1, words1)
+else:
+    words1 = words(w0, T1)
+    found = words2(w1, T1, words1)
+if found:
     print("True")
 else:
     print("False")
-
