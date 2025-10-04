@@ -220,13 +220,13 @@ gggg $\rightarrow$ $\varepsilon$
 
 Теперь рассмотрим сумму этих двух инвариантов для каждого правила и покажем, что она всегда строго убывает. Обозначим эту сумму через M.
 
-Рассмотрим правило `fgh → fff`. Для левой части `fgh` значение M = 8, а для правой части `fff` M = 0. Вне зависимости от контекста, в котором они находятся, M всегда уменьшается минимум на 8.
+Рассмотрим правило `fgh $\rightarrow$ fff`. Для левой части `fgh` значение M = 8, а для правой части `fff` M = 0. Вне зависимости от контекста, в котором они находятся, M всегда уменьшается минимум на 8.
 
-Рассмотрим правило `fgh → ggg`. Для `fgh` значение M = 8, а для `ggg` M = 6. Контекст также не уменьшает разницу между левой и правой частями правила, поэтому для этого правила M уменьшается как минимум на 2.
+Рассмотрим правило `fgh $\rightarrow$ ggg`. Для `fgh` значение M = 8, а для `ggg` M = 6. Контекст также не уменьшает разницу между левой и правой частями правила, поэтому для этого правила M уменьшается как минимум на 2.
 
-Рассмотрим правило `fgh → hhh`. Для `fgh` значение M = 8, а для `hhh` M = 2. Однако контекст может уменьшить разницу между левой и правой частями. Например, если взять строку `hfgh`, которая переходит в `hhhh`, получим изменение M: 8 → 3, то есть M уменьшается хотя бы на 5.
+Рассмотрим правило `fgh $\rightarrow$ hhh`. Для `fgh` значение M = 8, а для `hhh` M = 2. Однако контекст может уменьшить разницу между левой и правой частями. Например, если взять строку `hfgh`, которая переходит в `hhhh`, получим изменение M: 8 $\rightarrow$ 3, то есть M уменьшается хотя бы на 5.
 
-Рассмотрим правило `hh → hfhgh`. Поскольку граничные буквы подстрок не меняются, контекст не влияет на разницу значений M. Таким образом, для `hh` значение M = 1, а для `hfhgh` M = 0, то есть M убывает на 1.
+Рассмотрим правило `hh $\rightarrow$ hfhgh`. Поскольку граничные буквы подстрок не меняются, контекст не влияет на разницу значений M. Таким образом, для `hh` значение M = 1, а для `hfhgh` M = 0, то есть M убывает на 1.
 
 Рассмотрим правило `gggg → $\varepsilon$`. Для `gggg` значение M = 8, а для `$\varepsilon$` M = 0. Однако при применении этого правила может возникнуть новая подстрока `fgh`, где вес `g` будет 8. Проверим, что это не увеличит M. Пусть есть строка `fgggggh`, для неё M = 10. Применив правило, получим `fgh`, для которой M = 8. Таким образом, даже в этом случае `M` строго уменьшается.
 
@@ -306,70 +306,6 @@ g $\rightarrow$ $\varepsilon$
 Код программы представлен в Листинге 1.
 \begin{lstlisting}
 import random
-from collections import deque
-
-def generate_random_word(length, alphabet):
-    return ''.join(random.choice(alphabet) for _ in range(length))
-
-def rule_T(word, rules):
-    applicable_rules = []
-    for lhs, rhs in rules:
-        positions = []
-        idx = 0
-        while idx <= len(word) - len(lhs):
-            if word[idx:idx+len(lhs)] == lhs:
-                positions.append(idx)
-            idx += 1
-        for pos in positions:
-            applicable_rules.append((lhs, rhs, pos))
-    if not applicable_rules:
-        return word, False
-    lhs, rhs, pos = random.choice(applicable_rules)
-    new_word = word[:pos] + rhs + word[pos+len(lhs):]
-    return new_word, True
-
-def apply_rules(word, rules):
-    results = set()
-    for lhs, rhs in rules:
-        idx = 0
-        while idx <= len(word) - len(lhs):
-            if word[idx:idx+len(lhs)] == lhs:
-                new_word = word[:idx] + rhs + word[idx+len(lhs):]
-                results.add(new_word)
-            idx += 1
-        idx = 0
-        while idx <= len(word) - len(rhs):
-            if word[idx:idx+len(rhs)] == rhs:
-                new_word = word[:idx] + lhs + word[idx+len(rhs):]
-                results.add(new_word)
-            idx += 1
-    return results
-def reachable(start, target, rules, max_len, max_steps):
-    if start == target:
-        return True
-    f_queue = deque([(start, 0)])
-    b_queue = deque([(target, 0)])
-    f_visited = {start}
-    b_visited = {target}
-    while f_queue and b_queue:
-        if len(f_queue) <= len(b_queue):
-            current_queue, current_visited, other_visited = f_queue, f_visited, b_visited
-        else:
-            current_queue, current_visited, other_visited = b_queue, b_visited, f_visited
-        word, steps = current_queue.popleft()
-        if steps >= max_steps:
-            continue
-        for new_word in apply_rules(word, rules):
-            if len(new_word) > max_len:
-                continue
-            if new_word in other_visited:
-                return True
-            if new_word not in current_visited:
-                current_visited.add(new_word)
-                current_queue.append((new_word, steps + 1))
-    return False
-
-alphabet = ['f', 'g', 'h']
 T = [
     ("fgh", "fff"),
     ("fgh", "ggg"),
@@ -377,38 +313,72 @@ T = [
     ("hh", "hfhgh"),
     ("gggg", "")
 ]
-
 T1 = [
-    ("fgh", "fff"),
-    ("ggg", "fgh"),
-    ("fff", "hhh"),
-    ("ghhh", "hhhg"),
-    ("fh", "hf"),
+    ("fh", ""),
     ("hh", "f"),
-    ("fgf", "ff"),
-    ("ghf", "hfg"),
     ("hf", ""),
     ("ff", "h"),
     ("g", "")
 ]
-word = generate_random_word(30, alphabet)
-sequence = [word]
-steps = random.randint(15, 20)
-for _ in range(steps):
-    word, applied = rule_T(word, T)
-    if not applied:
-        break
-    sequence.append(word)
-f = True
-for i in range(len(sequence) - 1):
-    w_from = sequence[i]
-    w_to = sequence[i + 1]
-    if not reachable(w_from, w_to, T1, max_len=100, max_steps=15):
-        f = False
-        print(f"Невозможно переписать '{w_from}' в '{w_to}' в T'")
-        break
-if f:
-    print("Слово достижимо в T'")
+alphabet = ["f", "g", "h"]
+
+def random_word():
+    return "".join(random.choice(alphabet) for _ in range(17))
+
+def apply_random_rules(word):
+    for _ in range(8):
+        applicable = []
+        for lhs, rhs in T:
+            positions = []  
+            for i in range(len(word) - len(lhs) + 1):  
+                substring = word[i:i+len(lhs)] 
+                if substring == lhs:  
+                    positions.append(i) 
+            if positions:
+                applicable.append((lhs, rhs, positions))
+        if not applicable:
+            continue
+        lhs, rhs, positions = random.choice(applicable)
+        pos = random.choice(positions)
+        word = word[:pos] + rhs + word[pos+len(lhs):]
+    return word
+
+def apply_rules(word, rules):
+    results = set()
+    for lhs, rhs in rules:
+        for i in range(len(word) - len(lhs) + 1):
+            if word[i:i+len(lhs)] == lhs:
+                new_word = word[:i] + rhs + word[i+len(lhs):]
+                results.add(new_word)
+    return results
+
+def words(start, rules):
+    seen = set([start])
+    s = [start]
+    while s:
+        new_s = []
+        for w in s:
+            new_words = apply_rules(w, rules)
+            for nw in new_words:
+                if nw not in seen:
+                    seen.add(nw)
+                    new_s.append(nw)
+        s = new_s
+    return seen
+    
+w0 = random_word()
+print("w =", w0)
+w1 = apply_random_rules(w0)
+print("w' = ", w1)
+
+words1 = words(w0, T1)
+words2 = words(w1, T1)
+
+intersect = words1 & words2
+if intersect:
+    print("True")
+else:
+    print("False")
 \end{lstlisting}
 
 \section{Метаморфоное тестирование}
@@ -418,13 +388,11 @@ if f:
 
 2. \[
 \begin{aligned}
-M(\omega) ={} & \frac{1}{13}|\omega|_f + \frac{1}{13}|\omega|_g + \frac{1}{26}|\omega|_h - \frac{1}{13}|\omega|_{ff} - \frac{1}{13}|\omega|_{fg} - \frac{1}{26}|\omega|_{fh} - \frac{1}{13}|\omega|_{gf} - \\
-&- \frac{1}{13}|\omega|_{gg} - \frac{1}{26}|\omega|_{gh} - \frac{1}{26}|\omega|_{hf} - \frac{1}{26}|\omega|_{hg} - \frac{1}{26}|\omega|_{fhf} - \frac{1}{26}|\omega|_{fhg} - \\
-&- \frac{1}{26}|\omega|_{fhh} - \frac{1}{26}|\omega|_{ghf} - \frac{1}{26}|\omega|_{ghg} - \frac{1}{26}|\omega|_{ghh} - \frac{1}{26}|\omega|_{hhf} - \\
-&- \frac{1}{26}|\omega|_{hhg} - \frac{1}{26}|\omega|_{hhh}
+M(\omega) ={} & \frac{1}{12}(|\omega|_f + |\omega|_g + |\omega|_h) - \frac{1}{12}(|\omega|_{ff} + |\omega|_{fg} + |\omega|_{fh} +  |\omega|_{hf} +  |\omega|_{hh} + \\
+&+ |\omega|_{hg} +  |\omega|_{gf} +  |\omega|_{gg} +  |\omega|_{gh})
 \end{aligned} 
 \]
-Однако если $\omega$ = `h` или $\omega$ = $\varepsilon$ то $M(\omega) = \frac{1}{13}$.
+Однако если $\omega$ = $\varepsilon$ то $M(\omega) = \frac{1}{12}$.
 Этот инвариант не убывает при применении любых правил из систем переписывания $\mathcal{T}'$ и $\mathcal{T}$. Коэффициенты этого инварианта было подобраны программно и проверены на контекстах разной длины.
 
 Для проверки была написана программ представленная в Листинге 2.
@@ -434,13 +402,8 @@ from fractions import Fraction
 
 alphabet = ["f", "g", "h"]
 rules = {
-    "fgh": "fff",
-    "ggg": "fgh",
-    "fff": "hhh",
-    "ghhh": "hhhg",
-    "fh": "hf",
+    "fh": "",
     "hh": "f",
-    "ghf": "hfg",
     "hf": "",
     "ff": "h",
     "g": ""
@@ -465,20 +428,10 @@ def diff_mod3(word):
 
 def invariant_M(w):
     S = ['f','g','h','ff','fg','fh','gf','gg','gh','hf','hg',
-         'hh','fff','ffg','ffh','fgf','fgg','fgh','fhf','fhg','fhh',
-         'gff','gfg','gfh','ggf','ggg','ggh','ghf','ghg','ghh',
-         'hff','hfg','hfh','hgf','hgg','hgh','hhf','hhg','hhh']
+         'hh']
     alpha = [
-        Fraction(1,13), Fraction(1,13), Fraction(1,26),
-        Fraction(-1,13), Fraction(-1,13), Fraction(-1,26),
-        Fraction(-1,13), Fraction(-1,13), Fraction(-1,26),
-        Fraction(-1,26), Fraction(-1,26), Fraction(0,1),
-        Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1),
-        Fraction(-1,26), Fraction(-1,26), Fraction(-1,26),
-        Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1),
-        Fraction(-1,26), Fraction(-1,26), Fraction(-1,26),
-        Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1),
-        Fraction(-1,26), Fraction(-1,26), Fraction(-1,26),
+        Fraction(1,12), Fraction(1,12), Fraction(1,12),
+        Fraction(-1,12), Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12)
     ]
     def count_substring(s, w):
         count = 0
@@ -490,11 +443,11 @@ def invariant_M(w):
     M = Fraction(0,1)
     for s,a in zip(S, alpha):
         M += a * count_substring(s, w)
-    if w == "h" or w == "":
-        M = Fraction(1, 13)
+    if w == "":
+         M = Fraction(1, 12)
     return M
 
-start = generate_word(15, 30)
+start = generate_word(15, 20)
 start_val1 = diff_mod3(start)
 start_val2 = invariant_M(start)
     
@@ -502,11 +455,13 @@ end = apply_rules_fixed_steps(start, rules, steps=15)
 end_val1 = diff_mod3(end)
 end_val2 = invariant_M(end)
 a1 = start_val1 == end_val1
-a2 = start_val2 <= end_val2
+a2 = start_val2 == end_val2
 if not (a1 and a2):
     print(start_val1 == end_val1)
     print(start_val2 <= end_val2, start_val2, end_val2)
     print(start, end)
+else:
+    print("Инварианты верны")
 \end{lstlisting}
 
 

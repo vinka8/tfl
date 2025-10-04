@@ -29,20 +29,10 @@ def diff_mod3(word):
 
 def invariant_M(w):
     S = ['f','g','h','ff','fg','fh','gf','gg','gh','hf','hg',
-         'hh','fff','ffg','ffh','fgf','fgg','fgh','fhf','fhg','fhh',
-         'gff','gfg','gfh','ggf','ggg','ggh','ghf','ghg','ghh',
-         'hff','hfg','hfh','hgf','hgg','hgh','hhf','hhg','hhh']
+         'hh']
     alpha = [
-        Fraction(1,13), Fraction(1,13), Fraction(1,26),
-        Fraction(-1,13), Fraction(-1,13), Fraction(-1,26),
-        Fraction(-1,13), Fraction(-1,13), Fraction(-1,26),
-        Fraction(-1,26), Fraction(-1,26), Fraction(0,1),
-        Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1),
-        Fraction(-1,26), Fraction(-1,26), Fraction(-1,26),
-        Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1),
-        Fraction(-1,26), Fraction(-1,26), Fraction(-1,26),
-        Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1), Fraction(0,1),
-        Fraction(-1,26), Fraction(-1,26), Fraction(-1,26),
+        Fraction(1,12), Fraction(1,12), Fraction(1,12),
+        Fraction(-1,12), Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12),Fraction(-1,12)
     ]
     def count_substring(s, w):
         count = 0
@@ -54,11 +44,11 @@ def invariant_M(w):
     M = Fraction(0,1)
     for s,a in zip(S, alpha):
         M += a * count_substring(s, w)
-    if w == "h" or w == "":
-        M = Fraction(1, 13)
+    if w == "":
+         M = Fraction(1, 12)
     return M
 
-start = generate_word(15, 30)
+start = generate_word(15, 20)
 start_val1 = diff_mod3(start)
 start_val2 = invariant_M(start)
     
@@ -71,4 +61,5 @@ if not (a1 and a2):
     print(start_val1 == end_val1)
     print(start_val2 <= end_val2, start_val2, end_val2)
     print(start, end)
-
+else:
+    print("Инварианты верны")
