@@ -86,8 +86,8 @@ if len(w0) <= len(w1):
     words1 = words(w0, T1)
     found = words2(w1, T1, words1)
 else:
-    words1 = words(w0, T1)
-    found = words2(w1, T1, words1)
+    words1 = words(w1, T1)
+    found = words2(w0, T1, words1)
 if found:
     print("True")
 else:
